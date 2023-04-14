@@ -1,0 +1,30 @@
+.header {
+    margin: 30px auto;
+    padding: 5px 2px;
+    background-color: black;
+    color: aliceblue;
+}
+
+.list { margin: 30px auto;
+}
+
+ul {
+    padding-left: 15px;
+}
+
+a:link {
+    color: blue;
+    text-decoration: none;
+}
+
+a:visited {
+    color: blueviolet;
+}
+
+a:hover {
+    color: aqua;
+}
+
+a:active {
+    color: cadetblue;
+}
