@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Onboarding - Mobile View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .btn {
+            display: inline-block;
+            background: #6366f1;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 30px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #4f46e5;
+        }
+        .note {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 Multi-Step Onboarding Test</h1>
+        <p class="subtitle">Test the mobile-first onboarding wizard with all required features</p>
+        
+        <h2>Implemented Features:</h2>
+        <ul class="feature-list">
+            <li>4-step wizard (Age, Objectives, Fitness Level, Health Notes)</li>
+            <li>Local storage persistence - resume where you left off</li>
+            <li>Form validation with inline error messages</li>
+            <li>Progress bar and step indicators</li>
+            <li>Mobile-responsive design</li>
+            <li>API integration with fallback mock response</li>
+            <li>Analytics event tracking (7 different events)</li>
+            <li>Loading states and user feedback</li>
+            <li>Routes to dashboard on completion</li>
+        </ul>
+
+        <a href="onboarding.html" class="btn">Start Onboarding →</a>
+
+        <div class="note">
+            <strong>📱 Best viewed on mobile or with mobile device emulation</strong><br>
+            Try interrupting the flow and returning - your progress will be saved!
+        </div>
+
+        <h2 style="margin-top: 30px;">Testing Steps:</h2>
+        <ol style="color: #555; line-height: 1.8;">
+            <li>Click "Start Onboarding" above</li>
+            <li>Fill out Step 1 (Age) and click Next</li>
+            <li>Select objectives in Step 2</li>
+            <li>Close the tab/browser</li>
+            <li>Reopen and return - your progress should be restored</li>
+            <li>Complete all steps</li>
+            <li>Observe routing to dashboard with userId</li>
+        </ol>
+    </div>
+</body>
+</html>

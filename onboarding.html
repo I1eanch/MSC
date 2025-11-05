@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Onboarding - Get Started</title>
+    <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+    <div class="onboarding-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="step-indicator" id="stepIndicator">
+            <span class="step active" data-step="1">1</span>
+            <span class="step" data-step="2">2</span>
+            <span class="step" data-step="3">3</span>
+            <span class="step" data-step="4">4</span>
+        </div>
+
+        <form id="onboardingForm" class="onboarding-form">
+            <!-- Step 1: Age -->
+            <div class="form-step active" data-step="1">
+                <h2>What's your age?</h2>
+                <p class="step-description">This helps us personalize your experience</p>
+                <div class="form-group">
+                    <input 
+                        type="number" 
+                        id="age" 
+                        name="age" 
+                        min="13" 
+                        max="120" 
+                        placeholder="Enter your age"
+                        required
+                    >
+                    <span class="error-message" id="ageError"></span>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-primary" id="nextBtn1">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Objectives -->
+            <div class="form-step" data-step="2">
+                <h2>What are your fitness objectives?</h2>
+                <p class="step-description">Select all that apply</p>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="objectives" value="weight_loss">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">Weight Loss</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="objectives" value="muscle_gain">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">Muscle Gain</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="objectives" value="endurance">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">Improve Endurance</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="objectives" value="flexibility">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">Increase Flexibility</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="objectives" value="general_fitness">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">General Fitness</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="objectives" value="stress_relief">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">Stress Relief</span>
+                        </label>
+                    </div>
+                    <span class="error-message" id="objectivesError"></span>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" id="backBtn2">Back</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn2">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Fitness Level -->
+            <div class="form-step" data-step="3">
+                <h2>What's your current fitness level?</h2>
+                <p class="step-description">Be honest - we'll tailor your plan accordingly</p>
+                <div class="form-group">
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="fitnessLevel" value="beginner" required>
+                            <span class="radio-custom"></span>
+                            <div class="radio-content">
+                                <span class="radio-title">Beginner</span>
+                                <span class="radio-description">New to fitness or returning after a break</span>
+                            </div>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="fitnessLevel" value="intermediate">
+                            <span class="radio-custom"></span>
+                            <div class="radio-content">
+                                <span class="radio-title">Intermediate</span>
+                                <span class="radio-description">Exercise regularly, 2-4 times per week</span>
+                            </div>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="fitnessLevel" value="advanced">
+                            <span class="radio-custom"></span>
+                            <div class="radio-content">
+                                <span class="radio-title">Advanced</span>
+                                <span class="radio-description">Train consistently, 5+ times per week</span>
+                            </div>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="fitnessLevel" value="athlete">
+                            <span class="radio-custom"></span>
+                            <div class="radio-content">
+                                <span class="radio-title">Athlete</span>
+                                <span class="radio-description">Competitive or professional level training</span>
+                            </div>
+                        </label>
+                    </div>
+                    <span class="error-message" id="fitnessLevelError"></span>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" id="backBtn3">Back</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn3">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Health Notes -->
+            <div class="form-step" data-step="4">
+                <h2>Any health considerations?</h2>
+                <p class="step-description">Let us know about any injuries, conditions, or limitations (optional)</p>
+                <div class="form-group">
+                    <textarea 
+                        id="healthNotes" 
+                        name="healthNotes" 
+                        rows="6" 
+                        placeholder="E.g., knee injury, high blood pressure, back problems..."
+                        maxlength="500"
+                    ></textarea>
+                    <div class="character-count">
+                        <span id="charCount">0</span>/500
+                    </div>
+                    <span class="error-message" id="healthNotesError"></span>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" id="backBtn4">Back</button>
+                    <button type="submit" class="btn btn-primary btn-submit" id="submitBtn">
+                        <span class="btn-text">Complete Setup</span>
+                        <span class="btn-loader" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="toast" id="toast" style="display: none;">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="onboarding.js"></script>
+</body>
+</html>
