@@ -9,9 +9,13 @@ import configuration from './config/configuration';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { EmailModule } from './email/email.module';
+import { OnboardingModule } from './onboarding/onboarding.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { User } from './database/entities/user.entity';
 import { RefreshToken } from './database/entities/refresh-token.entity';
+import { Goal } from './database/entities/goal.entity';
+import { ActivityLevel } from './database/entities/activity-level.entity';
+import { UserOnboarding } from './database/entities/user-onboarding.entity';
 
 @Module({
   imports: [
@@ -28,7 +32,7 @@ import { RefreshToken } from './database/entities/refresh-token.entity';
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [User, RefreshToken],
+        entities: [User, RefreshToken, Goal, ActivityLevel, UserOnboarding],
         synchronize: true,
         logging: false,
       }),
@@ -44,6 +48,7 @@ import { RefreshToken } from './database/entities/refresh-token.entity';
     AuthModule,
     UsersModule,
     EmailModule,
+    OnboardingModule,
   ],
   providers: [
     {

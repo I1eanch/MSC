@@ -5,9 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { RefreshToken } from './refresh-token.entity';
+import { Goal } from './goal.entity';
 
 export enum UserRole {
   USER = 'user',
@@ -58,4 +61,13 @@ export class User {
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshToken[];
+
+  @Field(() => [Goal], { nullable: true })
+  @ManyToMany(() => Goal, (goal) => goal.users)
+  @JoinTable({
+    name: 'user_goals',
+    joinColumn: { name: 'userId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'goalId', referencedColumnName: 'id' },
+  })
+  goals: Goal[];
 }
