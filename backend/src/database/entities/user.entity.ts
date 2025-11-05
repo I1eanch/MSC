@@ -31,8 +31,17 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
+
+  @Column({ nullable: true })
+  provider: string;
+
+  @Column({ nullable: true })
+  providerId: string;
+
+  @Column({ type: 'json', nullable: true })
+  providerData: any;
 
   @Field(() => UserRole)
   @Column({

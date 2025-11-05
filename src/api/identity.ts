@@ -12,6 +12,13 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface OAuthLoginRequest {
+  provider: string;
+  accessToken: string;
+  idToken?: string;
+  userData?: any;
+}
+
 export interface ForgotPasswordRequest {
   email: string;
 }
@@ -39,6 +46,10 @@ export const identityApi = {
 
   login: async (data: LoginRequest): Promise<AuthResponse> => {
     return apiClient.post<AuthResponse>('/auth/login', data);
+  },
+
+  oauthLogin: async (data: OAuthLoginRequest): Promise<AuthResponse> => {
+    return apiClient.post<AuthResponse>('/auth/oauth/login', data);
   },
 
   forgotPassword: async (data: ForgotPasswordRequest): Promise<MessageResponse> => {

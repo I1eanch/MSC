@@ -18,13 +18,14 @@ import { theme } from '../constants/theme';
 import { useAuth } from '../contexts/AuthContext';
 import { useAnalytics } from '../contexts/AnalyticsContext';
 import { validateEmail } from '../utils/validation';
+import { OAuthProvider } from '../utils/oauth';
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
 };
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const { login } = useAuth();
+  const { login, loginWithOAuth } = useAuth();
   const analytics = useAnalytics();
 
   const [email, setEmail] = useState('');
@@ -86,6 +87,28 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const handleSignUp = () => {
     analytics.trackButtonClick('sign_up_link', 'Login');
     navigation.navigate('SignUp');
+  };
+
+  const handleOAuthLogin = async (provider: OAuthProvider) => {
+    setLoading(true);
+    try {
+      analytics.trackButtonClick(`oauth_${provider}`, 'Login');
+      await loginWithOAuth(provider);
+      analytics.trackLoginCompleted({ method: provider });
+      navigation.navigate('Success', {
+        message: 'You have successfully logged in!',
+        type: 'login',
+      });
+    } catch (error: any) {
+      const errorMessage = error.message || `Failed to login with ${provider}`;
+      analytics.trackLoginFailed(errorMessage);
+      navigation.navigate('Failed', {
+        message: errorMessage,
+        type: 'login',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -161,6 +184,46 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               testID="sign-in-button"
               accessibilityHint="Sign in with your email and password"
             />
+
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or continue with</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <View style={styles.socialButtons}>
+              <Button
+                title="Google"
+                onPress={() => handleOAuthLogin(OAuthProvider.GOOGLE)}
+                loading={loading}
+                style={styles.socialButton}
+                testID="google-login-button"
+              />
+              <Button
+                title="Apple"
+                onPress={() => handleOAuthLogin(OAuthProvider.APPLE)}
+                loading={loading}
+                style={styles.socialButton}
+                testID="apple-login-button"
+              />
+            </View>
+
+            <View style={styles.socialButtons}>
+              <Button
+                title="VK"
+                onPress={() => handleOAuthLogin(OAuthProvider.VK)}
+                loading={loading}
+                style={styles.socialButton}
+                testID="vk-login-button"
+              />
+              <Button
+                title="Yandex"
+                onPress={() => handleOAuthLogin(OAuthProvider.YANDEX)}
+                loading={loading}
+                style={styles.socialButton}
+                testID="yandex-login-button"
+              />
+            </View>
           </View>
 
           <View style={styles.footer}>
@@ -222,6 +285,30 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: theme.spacing.md,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: theme.spacing.lg,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: theme.colors.border || '#E5E5E5',
+  },
+  dividerText: {
+    ...theme.typography.body,
+    color: theme.colors.textSecondary,
+    marginHorizontal: theme.spacing.md,
+  },
+  socialButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.sm,
+  },
+  socialButton: {
+    flex: 1,
+    marginHorizontal: theme.spacing.xs,
   },
   footer: {
     alignItems: 'center',

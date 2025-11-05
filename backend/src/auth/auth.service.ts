@@ -19,6 +19,8 @@ import { LoginDto } from './dto/login.dto';
 import { AuthResponse } from './dto/auth-response.dto';
 import { RefreshTokenResponse } from './dto/refresh-token.dto';
 import { JwtPayload, JwtRefreshPayload } from '../common/interfaces/jwt-payload.interface';
+import { OAuthLoginDto } from './dto/oauth-login.dto';
+import { OAuthService } from './oauth.service';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +29,7 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private emailService: EmailService,
+    private oauthService: OAuthService,
     @InjectRepository(RefreshToken)
     private refreshTokenRepository: Repository<RefreshToken>,
   ) {}
@@ -49,6 +52,23 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<AuthResponse> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
+
+    const tokens = await this.generateTokens(user);
+
+    return {
+      ...tokens,
+      user,
+    };
+  }
+
+  async oauthLogin(oauthDto: OAuthLoginDto): Promise<AuthResponse> {
+    const userInfo = await this.oauthService.validateOAuthToken(oauthDto);
+
+    const user = await this.oauthService.findOrCreateOAuthUser(
+      oauthDto.provider,
+      userInfo,
+      oauthDto.userData,
+    );
 
     const tokens = await this.generateTokens(user);
 

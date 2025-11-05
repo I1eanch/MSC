@@ -19,6 +19,7 @@ import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthResponse } from './dto/auth-response.dto';
 import { RefreshTokenResponse } from './dto/refresh-token.dto';
+import { OAuthLoginDto } from './dto/oauth-login.dto';
 import { JwtRefreshGuard } from '../common/guards/jwt-refresh.guard';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -47,6 +48,17 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   login(@Body() loginDto: LoginDto): Promise<AuthResponse> {
     return this.authService.login(loginDto);
+  }
+
+  @Public()
+  @Post('oauth/login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Login with OAuth provider (Apple, Google, VK, Yandex)' })
+  @ApiResponse({ status: 200, description: 'OAuth login successful', type: AuthResponse })
+  @ApiResponse({ status: 401, description: 'Invalid OAuth token' })
+  @ApiResponse({ status: 400, description: 'Unsupported provider or invalid data' })
+  oauthLogin(@Body() oauthDto: OAuthLoginDto): Promise<AuthResponse> {
+    return this.authService.oauthLogin(oauthDto);
   }
 
   @Public()

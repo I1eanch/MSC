@@ -10,17 +10,19 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { UsersModule } from '../users/users.module';
 import { EmailModule } from '../email/email.module';
 import { RefreshToken } from '../database/entities/refresh-token.entity';
+import { User } from '../database/entities/user.entity';
+import { OAuthService } from './oauth.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RefreshToken]),
+    TypeOrmModule.forFeature([RefreshToken, User]),
     PassportModule,
     JwtModule.register({}),
     UsersModule,
     EmailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthResolver, JwtStrategy, JwtRefreshStrategy],
+  providers: [AuthService, OAuthService, AuthResolver, JwtStrategy, JwtRefreshStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

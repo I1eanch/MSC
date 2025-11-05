@@ -8,6 +8,7 @@ import {
   getUser,
   clearAllStorage,
 } from '../utils/secureStorage';
+import { OAuthProvider, signInWithProvider } from '../utils/oauth';
 
 interface User {
   id: string;
@@ -22,6 +23,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  loginWithOAuth: (provider: OAuthProvider) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -91,6 +93,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(response.user);
   };
 
+  const loginWithOAuth = async (provider: OAuthProvider) => {
+    const oauthResult = await signInWithProvider(provider);
+    
+    if (!oauthResult) {
+      throw new Error('OAuth authentication was cancelled or failed');
+    }
+
+    const response: AuthResponse = await identityApi.oauthLogin({
+      provider,
+      accessToken: oauthResult.accessToken,
+      idToken: oauthResult.idToken,
+      userData: oauthResult.userData,
+    });
+
+    await saveToken(response.token);
+    await saveRefreshToken(response.refreshToken);
+    await saveUser(response.user);
+    setUser(response.user);
+  };
+
   const logout = async () => {
     try {
       await identityApi.logout();
@@ -108,6 +130,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated: !!user,
     signUp,
     login,
+    loginWithOAuth,
     logout,
   };
 

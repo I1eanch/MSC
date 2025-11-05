@@ -7,6 +7,7 @@ import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthResponse } from './dto/auth-response.dto';
 import { RefreshTokenResponse } from './dto/refresh-token.dto';
+import { OAuthLoginDto } from './dto/oauth-login.dto';
 import { JwtRefreshGuard } from '../common/guards/jwt-refresh.guard';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -26,6 +27,12 @@ export class AuthResolver {
   @Public()
   login(@Args('loginDto') loginDto: LoginDto): Promise<AuthResponse> {
     return this.authService.login(loginDto);
+  }
+
+  @Mutation(() => AuthResponse)
+  @Public()
+  oauthLogin(@Args('oauthDto') oauthDto: OAuthLoginDto): Promise<AuthResponse> {
+    return this.authService.oauthLogin(oauthDto);
   }
 
   @Mutation(() => RefreshTokenResponse)

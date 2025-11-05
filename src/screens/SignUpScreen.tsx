@@ -23,13 +23,14 @@ import {
   validatePasswordConfirmation,
   validateName,
 } from '../utils/validation';
+import { OAuthProvider } from '../utils/oauth';
 
 type SignUpScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 };
 
 const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
-  const { signUp } = useAuth();
+  const { signUp, loginWithOAuth } = useAuth();
   const analytics = useAnalytics();
 
   const [firstName, setFirstName] = useState('');
@@ -104,6 +105,28 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const handleSignIn = () => {
     analytics.trackButtonClick('sign_in_link', 'SignUp');
     navigation.navigate('Login');
+  };
+
+  const handleOAuthSignUp = async (provider: OAuthProvider) => {
+    setLoading(true);
+    try {
+      analytics.trackButtonClick(`oauth_${provider}`, 'SignUp');
+      await loginWithOAuth(provider);
+      analytics.trackSignupCompleted({ method: provider });
+      navigation.navigate('Success', {
+        message: 'Your account has been created successfully!',
+        type: 'signup',
+      });
+    } catch (error: any) {
+      const errorMessage = error.message || `Failed to sign up with ${provider}`;
+      analytics.trackSignupFailed(errorMessage);
+      navigation.navigate('Failed', {
+        message: errorMessage,
+        type: 'signup',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -209,6 +232,46 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               testID="sign-up-button"
               accessibilityHint="Create your account with the provided information"
             />
+
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or sign up with</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <View style={styles.socialButtons}>
+              <Button
+                title="Google"
+                onPress={() => handleOAuthSignUp(OAuthProvider.GOOGLE)}
+                loading={loading}
+                style={styles.socialButton}
+                testID="google-signup-button"
+              />
+              <Button
+                title="Apple"
+                onPress={() => handleOAuthSignUp(OAuthProvider.APPLE)}
+                loading={loading}
+                style={styles.socialButton}
+                testID="apple-signup-button"
+              />
+            </View>
+
+            <View style={styles.socialButtons}>
+              <Button
+                title="VK"
+                onPress={() => handleOAuthSignUp(OAuthProvider.VK)}
+                loading={loading}
+                style={styles.socialButton}
+                testID="vk-signup-button"
+              />
+              <Button
+                title="Yandex"
+                onPress={() => handleOAuthSignUp(OAuthProvider.YANDEX)}
+                loading={loading}
+                style={styles.socialButton}
+                testID="yandex-signup-button"
+              />
+            </View>
           </View>
 
           <View style={styles.footer}>
@@ -260,6 +323,30 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: theme.spacing.md,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: theme.spacing.lg,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: theme.colors.border || '#E5E5E5',
+  },
+  dividerText: {
+    ...theme.typography.body,
+    color: theme.colors.textSecondary,
+    marginHorizontal: theme.spacing.md,
+  },
+  socialButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.sm,
+  },
+  socialButton: {
+    flex: 1,
+    marginHorizontal: theme.spacing.xs,
   },
   footer: {
     alignItems: 'center',
