@@ -1,0 +1,42 @@
+# Example Terraform Variables File
+# Copy this file to terraform.tfvars and customize for your deployment
+# Or use environment-specific files in environments/ directory
+
+# Environment Configuration
+environment  = "dev"           # dev, staging, or prod
+aws_region   = "us-east-1"     # AWS region
+project_name = "rayman-portfolio"
+
+# Network Configuration
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+
+# Cost Optimization
+enable_nat_gateway = true   # Set to false to save costs (no internet for private subnets)
+single_nat_gateway = true   # Use single NAT for all AZs (cheaper but less redundant)
+
+# Feature Flags
+enable_ecs         = true
+enable_lambda      = true
+enable_cloudfront  = false  # Enable for production
+enable_api_gateway = true
+
+# RDS Configuration
+rds_instance_class    = "db.t3.micro"  # db.t3.small for staging, db.t3.medium for prod
+rds_allocated_storage = 20             # GB
+rds_engine_version    = "15.4"
+
+# ElastiCache Configuration
+elasticache_node_type       = "cache.t3.micro"  # cache.t3.small for staging
+elasticache_num_cache_nodes = 1                 # 2-3 for production
+
+# Database Credentials
+db_name     = "portfolio_dev"
+db_username = "admin"
+
+# Additional Tags
+tags = {
+  CostCenter = "development"
+  Owner      = "devops-team"
+  Terraform  = "true"
+}
