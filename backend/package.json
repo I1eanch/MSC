@@ -1,0 +1,33 @@
+{
+  "name": "dashboard-backend",
+  "version": "1.0.0",
+  "description": "Dashboard backend with motivational content, habits, workout progress, and quick links",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "NODE_ENV=test jest --coverage --runInBand",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["dashboard", "backend", "api"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-cron": "^3.0.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "./coverage",
+    "collectCoverageFrom": [
+      "services/**/*.js",
+      "scheduler/**/*.js",
+      "routes/**/*.js"
+    ]
+  }
+}
