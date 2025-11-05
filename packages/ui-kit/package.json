@@ -1,7 +1,7 @@
 {
   "name": "@packages/ui-kit",
   "version": "1.0.0",
-  "description": "Shared UI components library",
+  "description": "Shared UI components and design system",
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,6 +10,21 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./tokens": {
+      "import": "./dist/tokens/index.mjs",
+      "require": "./dist/tokens/index.js",
+      "types": "./dist/tokens/index.d.ts"
+    },
+    "./web": {
+      "import": "./dist/web/index.mjs",
+      "require": "./dist/web/index.js",
+      "types": "./dist/web/index.d.ts"
+    },
+    "./mobile": {
+      "import": "./dist/mobile/index.mjs",
+      "require": "./dist/mobile/index.js",
+      "types": "./dist/mobile/index.d.ts"
     }
   },
   "scripts": {
@@ -18,7 +33,10 @@
     "lint": "eslint src/**/*.{ts,tsx}",
     "format": "prettier --write src/**/*.{ts,tsx}",
     "format:check": "prettier --check src/**/*.{ts,tsx}",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "storybook:web": "storybook dev -p 6006",
+    "storybook:web:build": "storybook build",
+    "storybook:mobile": "expo start --web"
   },
   "peerDependencies": {
     "react": "^18.0.0",
@@ -29,8 +47,27 @@
       "optional": true
     }
   },
+  "dependencies": {
+    "react-native-paper": "^5.11.1",
+    "styled-components": "^6.1.1"
+  },
   "devDependencies": {
+    "@storybook/addon-essentials": "^7.5.3",
+    "@storybook/addon-interactions": "^7.5.3",
+    "@storybook/addon-links": "^7.5.3",
+    "@storybook/addon-ondevice-actions": "^7.5.3",
+    "@storybook/addon-ondevice-controls": "^7.5.3",
+    "@storybook/blocks": "^7.5.3",
+    "@storybook/react": "^7.5.3",
+    "@storybook/react-native": "^7.5.3",
+    "@storybook/react-vite": "^7.5.3",
+    "@storybook/testing-library": "^0.2.2",
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@types/react": "^18.2.0",
+    "@types/react-native": "^0.72.0",
+    "@types/styled-components": "^5.1.26",
+    "storybook": "^7.5.3",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0"
   }
 }
