@@ -191,7 +191,22 @@ cp apps/mobile/.env.example apps/mobile/.env.local
 
 ## 🚢 Deployment
 
-### Backend
+### Automated CI/CD Pipelines
+
+This project includes comprehensive GitHub Actions workflows for automated CI/CD:
+
+- **CI Pipeline**: Automatic linting, testing, and building on every PR
+- **Mobile Deployment**: Expo EAS builds for iOS and Android
+- **Backend Deployment**: Docker-based deployment to AWS ECS with OIDC
+- **Admin Web Deployment**: Deployment to Vercel or AWS CloudFront
+
+**Quick Start**: See [CI-CD-QUICKSTART.md](./CI-CD-QUICKSTART.md)
+
+**Detailed Guide**: See [docs/CI-CD.md](./docs/CI-CD.md)
+
+### Manual Deployment
+
+#### Backend
 
 ```bash
 cd apps/backend
@@ -199,7 +214,7 @@ pnpm build
 pnpm start
 ```
 
-### Admin Web
+#### Admin Web
 
 ```bash
 cd apps/admin-web
@@ -207,7 +222,7 @@ pnpm build
 pnpm start
 ```
 
-### Mobile
+#### Mobile
 
 Build for release:
 
@@ -219,8 +234,13 @@ pnpm build:android
 
 ## 📚 Documentation
 
-- See `/docs` directory for detailed documentation
-- See `CONTRIBUTING.md` for workspace conventions and guidelines
+- [CI/CD Quick Start](./CI-CD-QUICKSTART.md) - Get CI/CD pipelines running in minutes
+- [CI/CD Documentation](./docs/CI-CD.md) - Comprehensive CI/CD guide
+- [Architecture](./docs/ARCHITECTURE.md) - System architecture and design
+- [Deployment Guide](./docs/DEPLOYMENT.md) - Detailed deployment instructions
+- [Contributing Guidelines](./CONTRIBUTING.md) - Development practices
+- [Workspace Documentation](./docs/WORKSPACES.md) - Monorepo structure
+- See `/docs` directory for complete documentation
 
 ## 🤝 Contributing
 
