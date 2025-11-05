@@ -12,6 +12,15 @@ build
 .nx
 out
 
+# Backend
+backend/dist
+backend/node_modules
+backend/.env
+backend/.env.local
+backend/schema.gql
+backend/src/schema.gql
+backend/coverage
+
 # IDE
 .vscode
 .idea
