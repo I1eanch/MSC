@@ -1,0 +1,49 @@
+{
+  "root": true,
+  "extends": ["eslint:recommended", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "env": {
+    "es2020": true,
+    "node": true
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "rules": {
+        "@typescript-eslint/explicit-function-return-types": "off"
+      }
+    },
+    {
+      "files": ["apps/admin-web/**"],
+      "extends": ["next"]
+    },
+    {
+      "files": ["apps/mobile/**"],
+      "extends": ["plugin:react-native/all"],
+      "rules": {
+        "react-native/no-unused-styles": "warn"
+      }
+    },
+    {
+      "files": ["apps/backend/**"],
+      "rules": {
+        "@typescript-eslint/explicit-function-return-types": "warn"
+      }
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Build outputs
+dist
+build
+.next
+.turbo
+.nx
+out
+
+# Backend
+backend/dist
+backend/node_modules
+backend/.env
+backend/.env.local
+backend/schema.gql
+backend/src/schema.gql
+backend/coverage
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*.swn
+.DS_Store
+*.iml
+.iws
+.ipr
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage
+.nyc_output
+junit.xml
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Mobile
+apps/mobile/android/.gradle
+apps/mobile/android/build
+apps/mobile/android/local.properties
+apps/mobile/ios/Pods
+apps/mobile/ios/Podfile.lock
+apps/mobile/ios/.xcode.env
+
+# Database
+*.sqlite
+*.sqlite3
+
+# Temporary
+tmp
+temp
+cache
