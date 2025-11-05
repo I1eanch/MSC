@@ -12,12 +12,22 @@ build
 .nx
 out
 
+# Backend specific
+backend/dist
+backend/node_modules
+backend/.env
+backend/.env.local
+backend/schema.gql
+backend/src/schema.gql
+backend/coverage
+
 # IDE
-.vscode
-.idea
+.vscode/
+.idea/
 *.swp
 *.swo
 *.swn
+*~
 .DS_Store
 *.iml
 .iws
