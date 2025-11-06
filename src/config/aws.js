@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const fs = require('fs');
 
 AWS.config.update({
   region: process.env.AWS_REGION,
@@ -16,10 +17,19 @@ const mediaConvert = new AWS.MediaConvert({
   apiVersion: '2017-08-29'
 });
 
-const cloudFront = new AWS.CloudFront.Signer(
-  process.env.CLOUDFRONT_KEY_PAIR_ID,
-  require('fs').readFileSync(process.env.CLOUDFRONT_PRIVATE_KEY_PATH || './keys/cloudfront-private-key.pem', 'utf8')
-);
+let cloudFront = null;
+try {
+  const keyPath = process.env.CLOUDFRONT_PRIVATE_KEY_PATH || './keys/cloudfront-private-key.pem';
+  if (process.env.CLOUDFRONT_KEY_PAIR_ID && fs.existsSync(keyPath)) {
+    const privateKey = fs.readFileSync(keyPath, 'utf8');
+    cloudFront = new AWS.CloudFront.Signer(
+      process.env.CLOUDFRONT_KEY_PAIR_ID,
+      privateKey
+    );
+  }
+} catch (error) {
+  console.warn('CloudFront signing not configured:', error.message);
+}
 
 module.exports = {
   s3,

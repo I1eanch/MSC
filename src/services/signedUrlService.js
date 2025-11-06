@@ -5,6 +5,12 @@ const logger = require('../utils/logger');
 
 const generateSignedUrl = async (resourceUrl, expirySeconds = 3600) => {
   try {
+    if (!cloudFront) {
+      logger.warn('CloudFront signing not configured, returning unsigned URL');
+      const fallbackUrl = resourceUrl + `?expires=${Math.floor(Date.now() / 1000) + expirySeconds}`;
+      return fallbackUrl;
+    }
+
     const expireTime = Math.floor(Date.now() / 1000) + expirySeconds;
 
     const signedUrl = cloudFront.getSignedUrl({
