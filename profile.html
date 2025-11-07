@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Goals & Progress</title>
+    <link rel="stylesheet" href="profile-styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="mobile-container">
+        <header class="profile-header">
+            <button class="back-btn" onclick="window.history.back()">←</button>
+            <h1>Profile</h1>
+            <button class="menu-btn">⋮</button>
+        </header>
+
+        <nav class="tab-navigation">
+            <button class="tab-btn active" data-tab="goals">Goals</button>
+            <button class="tab-btn" data-tab="photos">Photos</button>
+            <button class="tab-btn" data-tab="charts">Progress</button>
+            <button class="tab-btn" data-tab="settings">Settings</button>
+        </nav>
+
+        <!-- Goals Tab -->
+        <div class="tab-content active" id="goals-tab">
+            <div class="section-header">
+                <h2>My Goals</h2>
+                <button class="add-btn" id="add-goal-btn">+ Add Goal</button>
+            </div>
+            
+            <div class="goals-list" id="goals-list">
+                <!-- Goals will be dynamically added here -->
+            </div>
+
+            <div class="goal-form hidden" id="goal-form">
+                <h3>New Goal</h3>
+                <input type="text" id="goal-title" placeholder="Goal title" maxlength="50">
+                <input type="number" id="goal-target" placeholder="Target value" step="0.1">
+                <input type="text" id="goal-unit" placeholder="Unit (kg, lbs, km, etc.)" maxlength="10">
+                <input type="date" id="goal-date">
+                <div class="form-actions">
+                    <button class="btn-secondary" id="cancel-goal-btn">Cancel</button>
+                    <button class="btn-primary" id="save-goal-btn">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photos Tab -->
+        <div class="tab-content" id="photos-tab">
+            <div class="section-header">
+                <h2>Before & After</h2>
+                <button class="add-btn" id="add-photo-btn">+ Add Photo</button>
+            </div>
+
+            <div class="photo-gallery" id="photo-gallery">
+                <!-- Photos will be dynamically added here -->
+            </div>
+
+            <div class="photo-upload-modal hidden" id="photo-upload-modal">
+                <div class="modal-content">
+                    <h3>Upload Photo</h3>
+                    <div class="photo-type-selector">
+                        <label>
+                            <input type="radio" name="photo-type" value="before" checked>
+                            Before
+                        </label>
+                        <label>
+                            <input type="radio" name="photo-type" value="after">
+                            After
+                        </label>
+                    </div>
+                    <input type="file" id="photo-input" accept="image/*" capture="environment">
+                    <div class="photo-preview" id="photo-preview"></div>
+                    <input type="date" id="photo-date" required>
+                    <textarea id="photo-notes" placeholder="Add notes (optional)" rows="3"></textarea>
+                    <div class="form-actions">
+                        <button class="btn-secondary" id="cancel-photo-btn">Cancel</button>
+                        <button class="btn-primary" id="save-photo-btn">Upload</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Tab -->
+        <div class="tab-content" id="charts-tab">
+            <div class="section-header">
+                <h2>Progress Charts</h2>
+                <select id="chart-timeframe" class="timeframe-selector">
+                    <option value="7">Last 7 days</option>
+                    <option value="30" selected>Last 30 days</option>
+                    <option value="90">Last 90 days</option>
+                    <option value="365">Last year</option>
+                </select>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>Weight Progress</h3>
+                    <canvas id="weight-chart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Workout Frequency</h3>
+                    <canvas id="workout-chart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Goal Completion Rate</h3>
+                    <canvas id="completion-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-content" id="settings-tab">
+            <div class="section-header">
+                <h2>Settings</h2>
+            </div>
+
+            <div class="settings-section">
+                <h3>Account Information</h3>
+                <div class="setting-item">
+                    <label for="user-name">Name</label>
+                    <input type="text" id="user-name" placeholder="Your name">
+                </div>
+                <div class="setting-item">
+                    <label for="user-email">Email</label>
+                    <input type="email" id="user-email" placeholder="your.email@example.com">
+                </div>
+                <div class="setting-item">
+                    <label for="user-weight">Current Weight</label>
+                    <div class="input-group">
+                        <input type="number" id="user-weight" placeholder="0" step="0.1">
+                        <select id="weight-unit">
+                            <option value="kg">kg</option>
+                            <option value="lbs">lbs</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Notifications</h3>
+                <div class="setting-toggle">
+                    <div class="toggle-info">
+                        <strong>Daily Reminders</strong>
+                        <span>Get reminded to log your progress</span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notify-daily">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-toggle">
+                    <div class="toggle-info">
+                        <strong>Goal Milestones</strong>
+                        <span>Celebrate when you reach milestones</span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notify-milestones">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-toggle">
+                    <div class="toggle-info">
+                        <strong>Weekly Summary</strong>
+                        <span>Review your weekly progress</span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notify-weekly">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-toggle">
+                    <div class="toggle-info">
+                        <strong>Motivational Quotes</strong>
+                        <span>Get daily motivation</span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notify-motivation">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Preferences</h3>
+                <div class="setting-item">
+                    <label for="theme-select">Theme</label>
+                    <select id="theme-select">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="auto">Auto</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="language-select">Language</label>
+                    <select id="language-select">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <button class="btn-primary full-width" id="save-settings-btn">Save Settings</button>
+                <button class="btn-danger full-width" id="clear-data-btn">Clear All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast hidden" id="toast"></div>
+
+    <script src="profile-script.js"></script>
+</body>
+</html>
