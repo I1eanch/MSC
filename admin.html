@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Subscription Management</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <h1><i class="fas fa-cog"></i> Subscription Management Admin</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshData()">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="admin-nav">
+            <ul>
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a></li>
+                <li><a href="#subscriptions" class="nav-link" data-section="subscriptions">
+                    <i class="fas fa-users"></i> Subscriptions
+                </a></li>
+                <li><a href="#billing" class="nav-link" data-section="billing">
+                    <i class="fas fa-credit-card"></i> Billing History
+                </a></li>
+                <li><a href="#refunds" class="nav-link" data-section="refunds">
+                    <i class="fas fa-undo"></i> Refunds
+                </a></li>
+                <li><a href="#audit" class="nav-link" data-section="audit">
+                    <i class="fas fa-history"></i> Audit Trail
+                </a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <h2>Dashboard Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-users">0</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="active-subscriptions">0</h3>
+                            <p>Active Subscriptions</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="monthly-revenue">$0</h3>
+                            <p>Monthly Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="payment-issues">0</h3>
+                            <p>Payment Issues</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div id="recent-activity-list" class="activity-list">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subscriptions Section -->
+            <section id="subscriptions" class="content-section">
+                <div class="section-header">
+                    <h2>User Subscriptions</h2>
+                    <div class="section-actions">
+                        <div class="search-filter">
+                            <input type="text" id="subscription-search" placeholder="Search users..." class="search-input">
+                            <select id="status-filter" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="expired">Expired</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="applyFilters()">Apply</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                                <th>Next Billing</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subscriptions-table-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Billing Section -->
+            <section id="billing" class="content-section">
+                <div class="section-header">
+                    <h2>Billing History</h2>
+                    <div class="section-actions">
+                        <div class="search-filter">
+                            <input type="text" id="billing-search" placeholder="Search transactions..." class="search-input">
+                            <input type="date" id="date-filter" class="filter-input">
+                            <select id="payment-status-filter" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="applyBillingFilters()">Apply</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Method</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billing-table-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Refunds Section -->
+            <section id="refunds" class="content-section">
+                <div class="section-header">
+                    <h2>Refund Management</h2>
+                    <button class="btn btn-primary" onclick="showRefundModal()">
+                        <i class="fas fa-plus"></i> Process Refund
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Refund ID</th>
+                                <th>Transaction ID</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Reason</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="refunds-table-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Audit Trail Section -->
+            <section id="audit" class="content-section">
+                <div class="section-header">
+                    <h2>Audit Trail</h2>
+                    <div class="section-actions">
+                        <div class="search-filter">
+                            <input type="text" id="audit-search" placeholder="Search audit logs..." class="search-input">
+                            <select id="action-filter" class="filter-select">
+                                <option value="">All Actions</option>
+                                <option value="subscription_granted">Subscription Granted</option>
+                                <option value="subscription_revoked">Subscription Revoked</option>
+                                <option value="payment_processed">Payment Processed</option>
+                                <option value="refund_processed">Refund Processed</option>
+                                <option value="user_updated">User Updated</option>
+                            </select>
+                            <input type="date" id="audit-date-filter" class="filter-input">
+                            <button class="btn btn-primary" onclick="applyAuditFilters()">Apply</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Admin</th>
+                                <th>Action</th>
+                                <th>Target</th>
+                                <th>Details</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody id="audit-table-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for User Actions -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">User Details</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="user-details">
+                    <div class="detail-row">
+                        <label>User ID:</label>
+                        <span id="modal-user-id"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Name:</label>
+                        <span id="modal-user-name"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Email:</label>
+                        <span id="modal-user-email"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Current Plan:</label>
+                        <span id="modal-user-plan"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Status:</label>
+                        <span id="modal-user-status"></span>
+                    </div>
+                </div>
+                
+                <div class="admin-notes">
+                    <label for="admin-notes">Admin Notes:</label>
+                    <textarea id="admin-notes" rows="4" placeholder="Add notes about this user..."></textarea>
+                </div>
+                
+                <div class="subscription-actions">
+                    <h4>Subscription Actions</h4>
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="grantSubscription()">
+                            <i class="fas fa-check"></i> Grant Access
+                        </button>
+                        <button class="btn btn-danger" onclick="revokeSubscription()">
+                            <i class="fas fa-times"></i> Revoke Access
+                        </button>
+                        <button class="btn btn-warning" onclick="extendSubscription()">
+                            <i class="fas fa-clock"></i> Extend
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveUserChanges()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refund Modal -->
+    <div id="refundModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Process Refund</h3>
+                <span class="close" onclick="closeRefundModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="refund-transaction">Transaction ID:</label>
+                    <input type="text" id="refund-transaction" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="refund-amount">Amount:</label>
+                    <input type="number" id="refund-amount" step="0.01" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="refund-reason">Reason:</label>
+                    <select id="refund-reason" class="form-input">
+                        <option value="">Select reason</option>
+                        <option value="duplicate">Duplicate payment</option>
+                        <option value="fraud">Fraudulent charge</option>
+                        <option value="service_not_provided">Service not provided</option>
+                        <option value="customer_request">Customer request</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="refund-notes">Additional Notes:</label>
+                    <textarea id="refund-notes" rows="3" class="form-input"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeRefundModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="processRefund()">Process Refund</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
