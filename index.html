@@ -2,11 +2,195 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Habit Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <h1>Hellow</h1>
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Habit Tracker</h1>
+            <div class="sync-status">
+                <i class="fas fa-wifi" id="syncIcon"></i>
+                <span id="syncStatus">Synced</span>
+            </div>
+        </header>
+
+        <!-- Main Navigation -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="habits">
+                <i class="fas fa-list-check"></i>
+                <span>Habits</span>
+            </button>
+            <button class="tab-btn" data-tab="history">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </button>
+            <button class="tab-btn" data-tab="stats">
+                <i class="fas fa-chart-line"></i>
+                <span>Stats</span>
+            </button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Habits Tab -->
+            <div id="habits-tab" class="tab-content active">
+                <div class="habits-header">
+                    <h2>Today's Habits</h2>
+                    <button id="addHabitBtn" class="add-btn">
+                        <i class="fas fa-plus"></i>
+                        Add Habit
+                    </button>
+                </div>
+                
+                <div id="habitsList" class="habits-list">
+                    <!-- Habits will be dynamically added here -->
+                </div>
+
+                <div class="empty-state" id="emptyState">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>No habits yet. Start building your routine!</p>
+                    <button class="primary-btn" onclick="habitTracker.showAddHabitModal()">Add Your First Habit</button>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history-tab" class="tab-content">
+                <div class="history-header">
+                    <h2>Completion History</h2>
+                    <select id="historyFilter" class="filter-select">
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                    </select>
+                </div>
+                
+                <div id="historyList" class="history-list">
+                    <!-- History items will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="stats-tab" class="tab-content">
+                <div class="stats-header">
+                    <h2>Your Progress</h2>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-fire"></i>
+                        <div class="stat-value" id="currentStreak">0</div>
+                        <div class="stat-label">Current Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-trophy"></i>
+                        <div class="stat-value" id="bestStreak">0</div>
+                        <div class="stat-label">Best Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="stat-value" id="totalCompleted">0</div>
+                        <div class="stat-label">Total Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-percentage"></i>
+                        <div class="stat-value" id="completionRate">0%</div>
+                        <div class="stat-label">Completion Rate</div>
+                    </div>
+                </div>
+
+                <div class="habit-progress">
+                    <h3>Habit Progress</h3>
+                    <div id="habitProgressList">
+                        <!-- Individual habit progress will be added here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Habit Modal -->
+    <div id="habitModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Habit</h3>
+                <button class="close-btn" onclick="habitTracker.closeHabitModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="habitForm">
+                <div class="form-group">
+                    <label for="habitName">Habit Name</label>
+                    <input type="text" id="habitName" placeholder="e.g., Morning Exercise" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="habitDescription">Description (optional)</label>
+                    <textarea id="habitDescription" placeholder="Why is this habit important?"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="habitCategory">Category</label>
+                    <select id="habitCategory">
+                        <option value="health">Health & Fitness</option>
+                        <option value="productivity">Productivity</option>
+                        <option value="mindfulness">Mindfulness</option>
+                        <option value="learning">Learning</option>
+                        <option value="social">Social</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="habitFrequency">Frequency</label>
+                    <select id="habitFrequency">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="habitTime">Preferred Time</label>
+                    <input type="time" id="habitTime">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="secondary-btn" onclick="habitTracker.closeHabitModal()">Cancel</button>
+                    <button type="submit" class="primary-btn">Save Habit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+            </div>
+            
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+            </div>
+            
+            <div class="form-actions">
+                <button class="secondary-btn" onclick="habitTracker.closeConfirmModal()">Cancel</button>
+                <button class="danger-btn" id="confirmBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Action completed successfully!</span>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
