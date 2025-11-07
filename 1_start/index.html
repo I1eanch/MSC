@@ -1,48 +1,145 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аллан Рэймэн. Портфолио.</title>
+    <title>Article Library</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <h1 class="header">Аллан Рэймэн</h1>
-    <img src="images/screen.jpg" width="400" alt="Аллан Рэймэн"/>
-    <div class="list">
-        <ul>
-            <li><a href="#link1"><strong>Кто это</strong></a></li>
-            <li><a href="#link2"><strong>Популярность</strong></a></li>
-            <li><a href="#link3"><strong>Творчество</strong></a></li>
-            <li><a href="#link4"><strong>Личная жизнь</strong></a></li>
-            <li><a href="#link5"><strong>Ссылки</strong></a></li>
-        </ul>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="app-title">Article Library</h1>
+            <div class="header-actions">
+                <button class="icon-btn" id="searchBtn" title="Search">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="icon-btn" id="favoritesBtn" title="Favorites">
+                    <i class="fas fa-heart"></i>
+                    <span class="badge" id="favoritesCount">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="search-container" id="searchContainer">
+        <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search articles..." class="search-input">
+            <button class="clear-search" id="clearSearch">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     </div>
-    <h2 class="header" id="link1">Кто это</h2>
-    <p><strong>Аллан Рэймэн – это музыкальный исполнитель, композитор и автор собственных песен, который в своем арсенале имеет 3 студийных альбома, а также очень таинственная и 
-        неординарная личность. О ранних годах музыканта мало что известно. Сам он позиционирует себя как целеустремлённого человека, который еще в детстве знал, что ему суждено
-        многого добиться. Ради своей мечты он был готов идти напролом и работать сутками. Музыкант уверен, что без должного упорства он бы никогда не прославился и не стал бы
-        тем, кем он является на данный момент.</strong></p>
-    <h2 class="header" id="link2">Популярность</h2>
-    <p><strong>На большой сцене Аллан выступает, начиная с 2016 года. Сотрудничает он с известным музыкальным лейблом «Communion Music». Именно эта организация спонсировала выпуск 
-        трех его альбомов, которые получили названия «Hotel Allan», «Roadhouse 01», «Harry Hard-on».Музыкант часто радует своих поклонников живыми выступлениями, становится лауреатом престижных премий в области музыки. Например, в 2018 году он стал обладателем премии 
-        «Прорыв года» на музыкальной церемонии «Juno».</strong></p>
-    <h2 class="header" id="link3">Творчество</h2>
-    <p><strong>Самой громкой и знаменитой композицией этого музыканта является песня «Hotel Rayman». Благодаря этой работе он стал знаменитым, так как она стала его 
-        дебютом на большой сцене. Стиль исполнения Аллана Рэймэна нельзя определить однозначно. Он очень умело сочетает различные музыкальные жанры, такие как рэп, кантри, соул. 
-        Творчество для него – это возможность дать выход своим эмоциям, рассказать о своих переживаниях. Многие отмечают, что песни Аллана получаются очень мрачными, но именно 
-        в этом и состоит их прелесть.</strong></p>
-    <h2 class="header" id="link4">Личная жизнь</h2>
-    <p><strong>Состояние личной жизни Аллана Рэймэна – это тайна, скрытая от посторонних глаз. Хотя, по официальным данным, музыкант не состоит в браке. Таким образом, 
-        данного музыканта и его творчество можно назвать загадочными, ведь он намеренно не раскрывает многих подробностей о своей жизни.</strong></p>
-    <h2 class="header" id="link5">Ссылки</h2>
-    <div class="list">
-        <ul>
-            <li><a href="https://www.instagram.com/allanrayman/"><strong>Страница в instagram</strong></a></li>
-            <li><a href="https://www.allanrayman.com/"><strong>Сайт</strong></a></li>
-            <li><a href="https://open.spotify.com/artist/6Yv6OBXD6ZQakEljaGaDAk?autoplay=true"><strong>Дискограия Spotify</strong></a></li>
-        </ul>
+
+    <!-- Filter Pills -->
+    <div class="filter-container">
+        <div class="filter-pills" id="filterPills">
+            <button class="filter-pill active" data-category="all">All</button>
+            <button class="filter-pill" data-category="technology">Technology</button>
+            <button class="filter-pill" data-category="design">Design</button>
+            <button class="filter-pill" data-category="business">Business</button>
+            <button class="filter-pill" data-category="lifestyle">Lifestyle</button>
+        </div>
+        <button class="filter-toggle" id="filterToggle">
+            <i class="fas fa-filter"></i>
+        </button>
     </div>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Article List View -->
+        <div id="articleListView" class="view active">
+            <div class="article-list" id="articleList">
+                <!-- Articles will be dynamically loaded here -->
+            </div>
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Loading articles...</span>
+            </div>
+        </div>
+
+        <!-- Article Detail View -->
+        <div id="articleDetailView" class="view">
+            <div class="article-detail" id="articleDetail">
+                <!-- Article content will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Favorites View -->
+        <div id="favoritesView" class="view">
+            <div class="favorites-header">
+                <h2>Favorite Articles</h2>
+            </div>
+            <div class="article-list" id="favoritesList">
+                <!-- Favorite articles will be shown here -->
+            </div>
+            <div class="empty-state" id="emptyFavorites">
+                <i class="fas fa-heart"></i>
+                <p>No favorite articles yet</p>
+                <p>Start adding articles to your favorites to see them here</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-view="articleListView">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" data-view="favoritesView">
+            <i class="fas fa-heart"></i>
+            <span>Favorites</span>
+        </button>
+        <button class="nav-item" id="offlineToggle">
+            <i class="fas fa-download"></i>
+            <span>Offline</span>
+        </button>
+    </nav>
+
+    <!-- Share Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share Article</h3>
+                <button class="modal-close" id="closeShareModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="share-options">
+                <button class="share-option" data-platform="twitter">
+                    <i class="fab fa-twitter"></i>
+                    <span>Twitter</span>
+                </button>
+                <button class="share-option" data-platform="facebook">
+                    <i class="fab fa-facebook"></i>
+                    <span>Facebook</span>
+                </button>
+                <button class="share-option" data-platform="linkedin">
+                    <i class="fab fa-linkedin"></i>
+                    <span>LinkedIn</span>
+                </button>
+                <button class="share-option" data-platform="email">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email</span>
+                </button>
+                <button class="share-option" data-platform="copy">
+                    <i class="fas fa-link"></i>
+                    <span>Copy Link</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
