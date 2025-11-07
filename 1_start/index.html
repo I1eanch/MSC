@@ -17,6 +17,7 @@
             <li><a href="#link3"><strong>Творчество</strong></a></li>
             <li><a href="#link4"><strong>Личная жизнь</strong></a></li>
             <li><a href="#link5"><strong>Ссылки</strong></a></li>
+            <li><a href="#link6"><strong>Поддержка</strong></a></li>
         </ul>
     </div>
     <h2 class="header" id="link1">Кто это</h2>
@@ -44,5 +45,153 @@
             <li><a href="https://open.spotify.com/artist/6Yv6OBXD6ZQakEljaGaDAk?autoplay=true"><strong>Дискограия Spotify</strong></a></li>
         </ul>
     </div>
+    <h2 class="header" id="link6">Поддержка творчества</h2>
+    <div class="payment-section">
+        <p><strong>Поддержите Аллана Рэймэна и помогите создавать новую музыку. Ваш вклад важен для продолжения творческого пути!</strong></p>
+        
+        <div class="payment-options">
+            <div class="payment-card">
+                <h3>Единоразовая поддержка</h3>
+                <p>Выберите сумму для однократного пожертвования</p>
+                <div class="amount-buttons">
+                    <button onclick="selectAmount(100, false)">100 ₽</button>
+                    <button onclick="selectAmount(500, false)">500 ₽</button>
+                    <button onclick="selectAmount(1000, false)">1000 ₽</button>
+                    <button onclick="selectAmount(2500, false)">2500 ₽</button>
+                </div>
+            </div>
+            
+            <div class="payment-card">
+                <h3>Регулярная поддержка</h3>
+                <p>Ежемесячная подписка для постоянной поддержки</p>
+                <div class="amount-buttons">
+                    <button onclick="selectAmount(100, true)">100 ₽/мес</button>
+                    <button onclick="selectAmount(300, true)">300 ₽/мес</button>
+                    <button onclick="selectAmount(500, true)">500 ₽/мес</button>
+                    <button onclick="selectAmount(1000, true)">1000 ₽/мес</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="payment-form" class="payment-form" style="display: none;">
+            <h3>Оформление платежа</h3>
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="amount">Сумма:</label>
+                    <input type="number" id="amount" name="amount" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Телефон:</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="+7 (999) 123-45-67">
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentGateway">Способ оплаты:</label>
+                    <select id="paymentGateway" name="paymentGateway" required>
+                        <option value="">Выберите способ оплаты</option>
+                        <option value="yoomoney">ЮMoney (Карта, QIWI, ЮMoney)</option>
+                        <option value="tinkoff">Тинькофф (Банковская карта)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="recurring">
+                        <input type="checkbox" id="recurring" name="recurring">
+                        Сделать регулярным платежом
+                    </label>
+                </div>
+                
+                <button type="submit" class="pay-button">Перейти к оплате</button>
+            </form>
+        </div>
+
+        <div id="payment-status" class="payment-status" style="display: none;"></div>
+    </div>
+
+    <script>
+        let selectedAmount = 0;
+        let isRecurring = false;
+
+        function selectAmount(amount, recurring) {
+            selectedAmount = amount;
+            isRecurring = recurring;
+            
+            document.getElementById('amount').value = amount;
+            document.getElementById('recurring').checked = recurring;
+            document.getElementById('payment-form').style.display = 'block';
+            
+            // Scroll to form
+            document.getElementById('payment-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const paymentData = {
+                amount: parseFloat(formData.get('amount')),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                paymentGateway: formData.get('paymentGateway'),
+                recurring: formData.get('recurring') === 'on',
+                description: isRecurring ? 
+                    `Регулярная поддержка Аллана Рэймэна - ${selectedAmount} ₽/мес` : 
+                    `Поддержка Аллана Рэймэна - ${selectedAmount} ₽`
+            };
+
+            const statusDiv = document.getElementById('payment-status');
+            statusDiv.style.display = 'block';
+            statusDiv.innerHTML = '<p class="loading">Обработка платежа...</p>';
+
+            try {
+                const response = await fetch('/api/payments/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.innerHTML = '<p class="success">Перенаправление на страницу оплаты...</p>';
+                    setTimeout(() => {
+                        window.location.href = result.confirmationUrl;
+                    }, 2000);
+                } else {
+                    statusDiv.innerHTML = `<p class="error">Ошибка: ${result.error}</p>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<p class="error">Ошибка соединения: ${error.message}</p>`;
+            }
+        });
+
+        // Phone number formatting
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value[0] === '7') {
+                    value = value.substring(1);
+                }
+                if (value.length <= 3) {
+                    value = `+7 (${value}`;
+                } else if (value.length <= 6) {
+                    value = `+7 (${value.substring(0, 3)}) ${value.substring(3)}`;
+                } else if (value.length <= 8) {
+                    value = `+7 (${value.substring(0, 3)}) ${value.substring(3, 6)}-${value.substring(6)}`;
+                } else {
+                    value = `+7 (${value.substring(0, 3)}) ${value.substring(3, 6)}-${value.substring(6, 8)}-${value.substring(8, 10)}`;
+                }
+            }
+            e.target.value = value;
+        });
+    </script>
 </body>
 </html>
