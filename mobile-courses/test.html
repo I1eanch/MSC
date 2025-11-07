@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Courses - Test Suite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .test-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4A90E2;
+            background: #f9f9f9;
+        }
+        .test-pass {
+            border-left-color: #50C878;
+            color: #50C878;
+        }
+        .test-fail {
+            border-left-color: #FF6B6B;
+            color: #FF6B6B;
+        }
+        h1 {
+            color: #4A90E2;
+            border-bottom: 2px solid #4A90E2;
+            padding-bottom: 10px;
+        }
+        .summary {
+            font-size: 16px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+        }
+        .summary.fail {
+            background: #ffebee;
+        }
+    </style>
+</head>
+<body>
+    <h1>📚 Mobile Courses - Test Suite</h1>
+    <div id="summary" class="summary"></div>
+    <div id="tests"></div>
+
+    <script src="data/courses.js"></script>
+    <script>
+        const tests = [];
+        const results = {
+            pass: 0,
+            fail: 0
+        };
+
+        function test(name, condition, message = '') {
+            const passed = Boolean(condition);
+            tests.push({ name, passed, message });
+            if (passed) results.pass++;
+            else results.fail++;
+        }
+
+        // Data Structure Tests
+        test('Courses data exists', window.coursesData !== undefined, 'coursesData not loaded');
+        test('Courses array exists', Array.isArray(coursesData.courses), 'courses is not an array');
+        test('Has at least 3 courses', coursesData.courses.length >= 3, `Found ${coursesData.courses.length} courses`);
+        
+        // Course structure tests
+        const firstCourse = coursesData.courses[0];
+        test('Course has id', firstCourse.id !== undefined, 'Course missing id');
+        test('Course has title', firstCourse.title !== undefined && firstCourse.title.length > 0, 'Course missing title');
+        test('Course has description', firstCourse.description !== undefined && firstCourse.description.length > 0, 'Course missing description');
+        test('Course has instructor', firstCourse.instructor !== undefined && firstCourse.instructor.length > 0, 'Course missing instructor');
+        test('Course has premium flag', firstCourse.premium !== undefined, 'Course missing premium flag');
+        test('Course has progress', typeof firstCourse.progress === 'number', 'Course missing progress or not a number');
+        test('Course has modules', Array.isArray(firstCourse.modules), 'Course modules not an array');
+        
+        // Module structure tests
+        const firstModule = firstCourse.modules[0];
+        test('Module has id', firstModule.id !== undefined, 'Module missing id');
+        test('Module has title', firstModule.title !== undefined && firstModule.title.length > 0, 'Module missing title');
+        test('Module has lessons', Array.isArray(firstModule.lessons), 'Module lessons not an array');
+        
+        // Lesson structure tests
+        const firstLesson = firstModule.lessons[0];
+        test('Lesson has id', firstLesson.id !== undefined, 'Lesson missing id');
+        test('Lesson has title', firstLesson.title !== undefined && firstLesson.title.length > 0, 'Lesson missing title');
+        test('Lesson has duration', typeof firstLesson.duration === 'number', 'Lesson missing duration or not a number');
+        test('Lesson has completed flag', typeof firstLesson.completed === 'boolean', 'Lesson missing completed flag or not boolean');
+        test('Lesson has premium flag', typeof firstLesson.premium === 'boolean', 'Lesson missing premium flag or not boolean');
+        
+        // Subscription tests
+        test('User subscription exists', coursesData.userSubscription !== undefined, 'userSubscription missing');
+        test('Subscription has isPremium flag', typeof coursesData.userSubscription.isPremium === 'boolean', 'isPremium missing or not boolean');
+        test('Subscription has expiresAt', coursesData.userSubscription.expiresAt !== undefined, 'expiresAt missing');
+        test('User progress object exists', coursesData.userProgress !== undefined, 'userProgress missing');
+        test('User progress is object', typeof coursesData.userProgress === 'object', 'userProgress not an object');
+        
+        // Premium course test
+        const premiumCourse = coursesData.courses.find(c => c.premium);
+        test('Has premium course', premiumCourse !== undefined, 'No premium courses found');
+        
+        if (premiumCourse) {
+            test('Premium course has premium lessons', premiumCourse.modules.some(m => m.lessons.some(l => l.premium)), 'Premium course has no premium lessons');
+        }
+        
+        // Free course test
+        const freeCourse = coursesData.courses.find(c => !c.premium);
+        test('Has free course', freeCourse !== undefined, 'No free courses found');
+        
+        // Thumbnail tests
+        test('Courses have thumbnails', firstCourse.thumbnail !== undefined && firstCourse.thumbnail.length > 0, 'Thumbnail missing');
+        
+        // Render tests
+        const testsDiv = document.getElementById('tests');
+        let html = '';
+        
+        const sections = {
+            'Data Structure': tests.slice(0, 9),
+            'Course Structure': tests.slice(9, 17),
+            'Module & Lesson Structure': tests.slice(17, 22),
+            'Subscription & Progress': tests.slice(22, 27),
+            'Premium & Content': tests.slice(27, 31),
+            'Additional Features': tests.slice(31)
+        };
+        
+        for (const [section, sectionTests] of Object.entries(sections)) {
+            if (sectionTests.length === 0) continue;
+            html += `<div class="test-section">`;
+            html += `<div class="test-title">${section}</div>`;
+            for (const t of sectionTests) {
+                const className = t.passed ? 'test-pass' : 'test-fail';
+                const status = t.passed ? '✓' : '✗';
+                html += `<div class="test-item ${className}">${status} ${t.name}${t.message ? ': ' + t.message : ''}</div>`;
+            }
+            html += `</div>`;
+        }
+        
+        testsDiv.innerHTML = html;
+        
+        const summaryDiv = document.getElementById('summary');
+        const className = results.fail > 0 ? 'fail' : '';
+        summaryDiv.className = `summary ${className}`;
+        summaryDiv.innerHTML = `<strong>Results:</strong> ${results.pass} passed, ${results.fail} failed (${Math.round(results.pass / (results.pass + results.fail) * 100)}% success rate)`;
+    </script>
+</body>
+</html>
