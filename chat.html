@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trainer Chat</title>
+    <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Trainer Chat">
+    <meta name="description" content="Mobile chat interface for trainer-client communication with offline support">
+</head>
+<body>
+    <div id="app">
+        <!-- Chat Header -->
+        <header class="chat-header">
+            <div class="header-content">
+                <div class="trainer-info">
+                    <img src="https://picsum.photos/seed/trainer/40/40.jpg" alt="Trainer" class="avatar">
+                    <div class="trainer-details">
+                        <h3>Sarah Johnson</h3>
+                        <span class="status" id="typingIndicator">Online</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="voiceCallBtn">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="icon-btn" id="videoCallBtn">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="icon-btn" id="menuBtn">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Messages Container -->
+        <main class="messages-container" id="messagesContainer">
+            <div class="date-separator">
+                <span>Today</span>
+            </div>
+            
+            <!-- Welcome Message -->
+            <div class="message received">
+                <img src="https://picsum.photos/seed/trainer/32/32.jpg" alt="Trainer" class="message-avatar">
+                <div class="message-content">
+                    <div class="message-bubble">
+                        Hi! I'm your personal trainer. How can I help you today?
+                    </div>
+                    <div class="message-time">10:30 AM</div>
+                </div>
+            </div>
+
+            <!-- Sample messages -->
+            <div class="message sent">
+                <div class="message-content">
+                    <div class="message-bubble">
+                        Hi! I'd like to start a new workout plan.
+                    </div>
+                    <div class="message-time">10:32 AM</div>
+                    <div class="message-status">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message received">
+                <img src="https://picsum.photos/seed/trainer/32/32.jpg" alt="Trainer" class="message-avatar">
+                <div class="message-content">
+                    <div class="message-bubble">
+                        Great! Let me create a personalized plan for you. What are your fitness goals?
+                    </div>
+                    <div class="message-time">10:33 AM</div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                <img src="https://picsum.photos/seed/trainer/32/32.jpg" alt="Trainer" class="message-avatar">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Message Input -->
+        <footer class="message-input-container">
+            <div class="input-wrapper">
+                <button class="attachment-btn" id="attachmentBtn">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                
+                <div class="message-input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Type a message..."
+                        rows="1"
+                    ></textarea>
+                    <button class="emoji-btn" id="emojiBtn">
+                        <i class="fas fa-smile"></i>
+                    </button>
+                </div>
+                
+                <button class="send-btn" id="sendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <!-- Attachment Options (Hidden by default) -->
+            <div class="attachment-options" id="attachmentOptions" style="display: none;">
+                <button class="attachment-option" data-type="photo">
+                    <i class="fas fa-camera"></i>
+                    <span>Photo</span>
+                </button>
+                <button class="attachment-option" data-type="file">
+                    <i class="fas fa-file"></i>
+                    <span>File</span>
+                </button>
+                <button class="attachment-option" data-type="video">
+                    <i class="fas fa-video"></i>
+                    <span>Video</span>
+                </button>
+            </div>
+        </footer>
+
+        <!-- File Input (Hidden) -->
+        <input type="file" id="fileInput" accept="image/*,video/*,.pdf,.doc,.docx" style="display: none;">
+        <input type="file" id="photoInput" accept="image/*" capture="camera" style="display: none;">
+
+        <!-- Offline Indicator -->
+        <div class="offline-indicator" id="offlineIndicator" style="display: none;">
+            <i class="fas fa-wifi-slash"></i>
+            <span>You're offline. Messages will be sent when connection is restored.</span>
+        </div>
+
+        <!-- Upload Progress -->
+        <div class="upload-progress" id="uploadProgress" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-text" id="progressText">Uploading...</span>
+        </div>
+    </div>
+
+    <!-- Notification Permission Modal -->
+    <div class="modal" id="notificationModal" style="display: none;">
+        <div class="modal-content">
+            <h3>Enable Notifications</h3>
+            <p>Stay updated with new messages from your trainer</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="declineNotifications">Not Now</button>
+                <button class="btn-primary" id="acceptNotifications">Enable</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="chat.js"></script>
+</body>
+</html>
