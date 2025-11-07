@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Content Management</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/@tiptap/core@2.1.13/dist/index.umd.min.js"></script>
+    <script src="https://unpkg.com/@tiptap/starter-kit@2.1.13/dist/index.umd.min.js"></script>
+    <script src="https://unpkg.com/@tiptap/extension-image@2.1.13/dist/index.umd.min.js"></script>
+    <script src="https://unpkg.com/@tiptap/extension-link@2.1.13/dist/index.umd.min.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-cog"></i> Admin Panel</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#articles" class="nav-link" data-section="articles"><i class="fas fa-newspaper"></i> Articles</a></li>
+                <li><a href="#categories" class="nav-link" data-section="categories"><i class="fas fa-tags"></i> Categories</a></li>
+                <li><a href="#media" class="nav-link" data-section="media"><i class="fas fa-images"></i> Media</a></li>
+                <li><a href="#audit-log" class="nav-link" data-section="audit-log"><i class="fas fa-history"></i> Audit Log</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="section-title">Dashboard</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="new-article-btn">
+                        <i class="fas fa-plus"></i> New Article
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-articles">0</h3>
+                            <p>Total Articles</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="published-articles">0</h3>
+                            <p>Published</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="draft-articles">0</h3>
+                            <p>Drafts</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="scheduled-articles">0</h3>
+                            <p>Scheduled</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div id="recent-activity-list" class="activity-list">
+                        <!-- Activity items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Articles Section -->
+            <section id="articles" class="content-section">
+                <div class="section-toolbar">
+                    <div class="toolbar-left">
+                        <input type="text" id="article-search" placeholder="Search articles..." class="search-input">
+                        <select id="category-filter" class="filter-select">
+                            <option value="">All Categories</option>
+                        </select>
+                        <select id="status-filter" class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
+                            <option value="scheduled">Scheduled</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-secondary" id="refresh-articles">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="articles-table-container">
+                    <table class="articles-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Author</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="articles-table-body">
+                            <!-- Articles will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Categories Section -->
+            <section id="categories" class="content-section">
+                <div class="section-toolbar">
+                    <button class="btn btn-primary" id="new-category-btn">
+                        <i class="fas fa-plus"></i> New Category
+                    </button>
+                </div>
+                <div class="categories-grid" id="categories-grid">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Media Section -->
+            <section id="media" class="content-section">
+                <div class="section-toolbar">
+                    <div class="upload-area" id="media-upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop files here or click to browse</p>
+                        <input type="file" id="media-upload-input" multiple accept="image/*,video/*">
+                    </div>
+                </div>
+                <div class="media-grid" id="media-grid">
+                    <!-- Media files will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Audit Log Section -->
+            <section id="audit-log" class="content-section">
+                <div class="section-toolbar">
+                    <div class="toolbar-left">
+                        <input type="text" id="audit-search" placeholder="Search audit log..." class="search-input">
+                        <select id="action-filter" class="filter-select">
+                            <option value="">All Actions</option>
+                            <option value="create">Create</option>
+                            <option value="update">Update</option>
+                            <option value="delete">Delete</option>
+                            <option value="publish">Publish</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="audit-table-container">
+                    <table class="audit-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Article</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="audit-table-body">
+                            <!-- Audit entries will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Article Editor Modal -->
+    <div id="article-editor-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="editor-title">New Article</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="article-form">
+                    <div class="form-group">
+                        <label for="article-title">Title</label>
+                        <input type="text" id="article-title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="article-slug">Slug</label>
+                        <input type="text" id="article-slug" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="article-category">Category</label>
+                        <select id="article-category" required>
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="article-tags">Tags</label>
+                        <input type="text" id="article-tags" placeholder="Enter tags separated by commas">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="article-excerpt">Excerpt</label>
+                        <textarea id="article-excerpt" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Content</label>
+                        <div id="editor-container">
+                            <div id="editor-toolbar" class="editor-toolbar">
+                                <button type="button" data-command="bold"><i class="fas fa-bold"></i></button>
+                                <button type="button" data-command="italic"><i class="fas fa-italic"></i></button>
+                                <button type="button" data-command="heading"><i class="fas fa-heading"></i></button>
+                                <button type="button" data-command="bulletList"><i class="fas fa-list-ul"></i></button>
+                                <button type="button" data-command="orderedList"><i class="fas fa-list-ol"></i></button>
+                                <button type="button" data-command="link"><i class="fas fa-link"></i></button>
+                                <button type="button" data-command="image"><i class="fas fa-image"></i></button>
+                            </div>
+                            <div id="editor-content" class="editor-content"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="article-featured-image">Featured Image</label>
+                        <input type="file" id="article-featured-image" accept="image/*">
+                        <div id="featured-image-preview" class="image-preview"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="article-status">Status</label>
+                        <select id="article-status">
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
+                            <option value="scheduled">Scheduled</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="schedule-group" style="display: none;">
+                        <label for="article-schedule">Publish Date</label>
+                        <input type="datetime-local" id="article-schedule">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-article">Save Article</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="category-modal-title">New Category</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="category-form">
+                    <div class="form-group">
+                        <label for="category-name">Name</label>
+                        <input type="text" id="category-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category-slug">Slug</label>
+                        <input type="text" id="category-slug" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category-description">Description</label>
+                        <textarea id="category-description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancel-category">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-category">Save Category</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
