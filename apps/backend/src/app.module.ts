@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AnalyticsController } from './analytics.controller';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -22,8 +24,9 @@ import { AppService } from './app.service';
       synchronize: process.env.NODE_ENV === 'development',
       logging: process.env.NODE_ENV === 'development',
     }),
+    SubscriptionsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, AnalyticsController],
   providers: [AppService],
 })
 export class AppModule {}
