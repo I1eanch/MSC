@@ -1,0 +1,209 @@
+name: Deploy Mobile - EAS Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        type: choice
+        options:
+          - ios
+          - android
+          - all
+      profile:
+        description: 'Build profile'
+        required: true
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+        default: 'preview'
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+        default: 'staging'
+
+jobs:
+  build-mobile:
+    name: Build Mobile App with EAS
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create app.json from template
+        run: |
+          cd apps/mobile
+          cat > app.json <<EOF
+          {
+            "expo": {
+              "name": "Mobile App",
+              "slug": "mobile-app",
+              "version": "1.0.0",
+              "orientation": "portrait",
+              "icon": "./assets/icon.png",
+              "userInterfaceStyle": "light",
+              "splash": {
+                "image": "./assets/splash.png",
+                "resizeMode": "contain",
+                "backgroundColor": "#ffffff"
+              },
+              "updates": {
+                "fallbackToCacheTimeout": 0
+              },
+              "assetBundlePatterns": [
+                "**/*"
+              ],
+              "ios": {
+                "supportsTablet": true,
+                "bundleIdentifier": "com.example.mobileapp"
+              },
+              "android": {
+                "adaptiveIcon": {
+                  "foregroundImage": "./assets/adaptive-icon.png",
+                  "backgroundColor": "#FFFFFF"
+                },
+                "package": "com.example.mobileapp"
+              },
+              "web": {
+                "favicon": "./assets/favicon.png"
+              }
+            }
+          }
+          EOF
+
+      - name: Create eas.json
+        run: |
+          cd apps/mobile
+          cat > eas.json <<EOF
+          {
+            "cli": {
+              "version": ">= 5.0.0"
+            },
+            "build": {
+              "development": {
+                "developmentClient": true,
+                "distribution": "internal",
+                "ios": {
+                  "simulator": true
+                }
+              },
+              "preview": {
+                "distribution": "internal",
+                "channel": "preview",
+                "env": {
+                  "EXPO_PUBLIC_API_URL": "\${{ secrets.STAGING_API_URL }}"
+                }
+              },
+              "production": {
+                "channel": "production",
+                "env": {
+                  "EXPO_PUBLIC_API_URL": "\${{ secrets.PRODUCTION_API_URL }}"
+                }
+              }
+            },
+            "submit": {
+              "production": {}
+            }
+          }
+          EOF
+
+      - name: Build iOS App
+        if: ${{ github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all' }}
+        run: |
+          cd apps/mobile
+          eas build --platform ios --profile ${{ github.event.inputs.profile }} --non-interactive --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android App
+        if: ${{ github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all' }}
+        run: |
+          cd apps/mobile
+          eas build --platform android --profile ${{ github.event.inputs.profile }} --non-interactive --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Get build status
+        run: |
+          cd apps/mobile
+          echo "🚀 EAS Build initiated successfully!"
+          echo "📱 Platform: ${{ github.event.inputs.platform }}"
+          echo "🔧 Profile: ${{ github.event.inputs.profile }}"
+          echo "🌍 Environment: ${{ github.event.inputs.environment }}"
+          echo ""
+          echo "Check build status at: https://expo.dev"
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **EAS Build Started**
+              
+              - **Platform**: ${{ github.event.inputs.platform }}
+              - **Profile**: ${{ github.event.inputs.profile }}
+              - **Environment**: ${{ github.event.inputs.environment }}
+              
+              Check build status at [Expo Dashboard](https://expo.dev)`
+            })
+
+  notify:
+    name: Notify Build Status
+    runs-on: ubuntu-latest
+    needs: build-mobile
+    if: always()
+    steps:
+      - name: Send notification
+        run: |
+          if [ "${{ needs.build-mobile.result }}" == "success" ]; then
+            echo "✅ Mobile build initiated successfully"
+          else
+            echo "❌ Mobile build failed"
+            exit 1
+          fi

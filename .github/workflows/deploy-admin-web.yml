@@ -1,0 +1,255 @@
+name: Deploy Admin Web
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+        default: 'staging'
+      target:
+        description: 'Deployment target'
+        required: true
+        type: choice
+        options:
+          - vercel
+          - cloudfront
+        default: 'vercel'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.target == 'vercel' }}
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build admin-web
+        run: pnpm --filter admin-web build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_ANALYTICS_ENABLED: true
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: ${{ github.event.inputs.environment == 'production' && '--prod' || '' }}
+          working-directory: apps/admin-web
+
+      - name: Create deployment summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY <<EOF
+          # 🚀 Admin Web Deployment Summary
+          
+          ## Details
+          - **Platform**: Vercel
+          - **Environment**: ${{ github.event.inputs.environment }}
+          - **Commit**: ${{ github.sha }}
+          
+          ## Deployed Application
+          - Admin Web (Next.js)
+          
+          ## URLs
+          - Vercel Dashboard: https://vercel.com
+          EOF
+
+  deploy-cloudfront:
+    name: Deploy to CloudFront
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.target == 'cloudfront' }}
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create Next.js static export config
+        run: |
+          cd apps/admin-web
+          cat > next.config.override.js <<EOF
+          const baseConfig = require('./next.config');
+          
+          module.exports = {
+            ...baseConfig,
+            output: 'export',
+            images: {
+              unoptimized: true,
+            },
+          };
+          EOF
+          mv next.config.override.js next.config.js
+
+      - name: Build admin-web for static export
+        run: pnpm --filter admin-web build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_ANALYTICS_ENABLED: true
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+          role-session-name: GitHubActions-${{ github.run_id }}
+
+      - name: Sync to S3
+        env:
+          S3_BUCKET: ${{ secrets.S3_BUCKET_ADMIN_WEB }}
+        run: |
+          aws s3 sync apps/admin-web/out/ s3://$S3_BUCKET/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "*.html" \
+            --exclude "sw.js" \
+            --exclude "workbox-*.js"
+          
+          # HTML files with shorter cache
+          aws s3 sync apps/admin-web/out/ s3://$S3_BUCKET/ \
+            --exclude "*" \
+            --include "*.html" \
+            --include "sw.js" \
+            --include "workbox-*.js" \
+            --cache-control "public, max-age=0, must-revalidate"
+
+      - name: Invalidate CloudFront cache
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
+            --paths "/*"
+
+      - name: Verify deployment
+        env:
+          CLOUDFRONT_URL: ${{ secrets.CLOUDFRONT_URL }}
+        run: |
+          echo "Verifying deployment..."
+          sleep 10
+          
+          response=$(curl -s -o /dev/null -w "%{http_code}" $CLOUDFRONT_URL || echo "000")
+          
+          if [ "$response" == "200" ]; then
+            echo "✅ Deployment verified successfully"
+          else
+            echo "⚠️ Verification returned status: $response"
+          fi
+
+      - name: Create deployment summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY <<EOF
+          # 🚀 Admin Web Deployment Summary
+          
+          ## Details
+          - **Platform**: AWS CloudFront + S3
+          - **Environment**: ${{ github.event.inputs.environment }}
+          - **Commit**: ${{ github.sha }}
+          - **S3 Bucket**: ${{ secrets.S3_BUCKET_ADMIN_WEB }}
+          - **Distribution**: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          
+          ## Deployed Application
+          - Admin Web (Next.js Static Export)
+          
+          ## URLs
+          - CloudFront URL: ${{ secrets.CLOUDFRONT_URL }}
+          EOF
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **Admin Web Deployed to ${{ github.event.inputs.environment }}**
+              
+              - **Platform**: ${{ github.event.inputs.target }}
+              - **Commit**: ${{ github.sha }}
+              - **URL**: ${{ secrets.CLOUDFRONT_URL || 'See Vercel dashboard' }}
+              
+              Deployment completed successfully!`
+            })
+
+  notify:
+    name: Notify Deployment Status
+    runs-on: ubuntu-latest
+    needs: [deploy-vercel, deploy-cloudfront]
+    if: always()
+    steps:
+      - name: Send notification
+        run: |
+          if [ "${{ needs.deploy-vercel.result }}" == "success" ] || [ "${{ needs.deploy-cloudfront.result }}" == "success" ]; then
+            echo "✅ Admin web deployed successfully to ${{ github.event.inputs.environment }}"
+          elif [ "${{ needs.deploy-vercel.result }}" == "skipped" ] && [ "${{ needs.deploy-cloudfront.result }}" == "skipped" ]; then
+            echo "⚠️ No deployment target selected"
+          else
+            echo "❌ Admin web deployment failed"
+            exit 1
+          fi
