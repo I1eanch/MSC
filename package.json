@@ -13,7 +13,19 @@
     "format:check": "turbo run format:check",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf node_modules",
-    "install-dependencies": "pnpm install"
+    "install-dependencies": "pnpm install",
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "expo": "~49.0.0",
+    "expo-auth-session": "~5.0.2",
+    "expo-crypto": "~12.4.1",
+    "expo-web-browser": "~12.3.2",
+    "expo-apple-authentication": "~6.1.0",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",

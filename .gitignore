@@ -1,24 +1,68 @@
 # Dependencies
 node_modules
+node_modules/
 pnpm-lock.yaml
 yarn.lock
 package-lock.json
 
 # Build outputs
 dist
+dist/
 build
+build/
 .next
 .turbo
 .nx
 out
+web-build/
+
+# Backend specific
+backend/dist
+backend/node_modules
+backend/.env
+backend/.env.local
+backend/schema.gql
+backend/src/schema.gql
+backend/coverage
+
+# OSX
+.DS_Store
+Thumbs.db
+
+# Xcode
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
+
+# Android/IntelliJ
+.gradle
+local.properties
+*.hprof
+.cxx/
+*.keystore
+!debug.keystore
 
 # IDE
-.vscode
+.vscode/
 .idea
+.idea/
 *.swp
 *.swo
 *.swn
-.DS_Store
+*~
 *.iml
 .iws
 .ipr
@@ -27,22 +71,21 @@ out
 .env
 .env.local
 .env.*.local
+.env.production
 
 # Testing
 coverage
+coverage/
 .nyc_output
 junit.xml
 
 # Logs
 logs
 *.log
+npm-debug.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# OS
-.DS_Store
-Thumbs.db
 
 # Mobile
 apps/mobile/android/.gradle
@@ -51,6 +94,15 @@ apps/mobile/android/local.properties
 apps/mobile/ios/Pods
 apps/mobile/ios/Podfile.lock
 apps/mobile/ios/.xcode.env
+
+# Bundle artifacts
+*.jsbundle
+
+# CocoaPods
+ios/Pods/
+
+# Expo
+.expo/
 
 # Database
 *.sqlite
