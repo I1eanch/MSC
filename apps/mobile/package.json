@@ -17,6 +17,7 @@
   "dependencies": {
     "@packages/api-client": "workspace:*",
     "@packages/analytics-sdk": "workspace:*",
+    "@packages/payment-sdk": "workspace:*",
     "@packages/ui-kit": "workspace:*",
     "@react-navigation/native": "^6.1.0",
     "@react-navigation/stack": "^6.3.0",
